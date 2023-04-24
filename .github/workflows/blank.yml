@@ -43,4 +43,4 @@ jobs:
           password: ${{secrets.DOCKERHUB_PWD}}
 
       - name: Expose Docker container
-        run: docker run -it -d -p 5000:5000 imagem-minha:latest
+        run: docker run -it -d -p 5000:5000/imagem-minha:latest
