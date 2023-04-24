@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: python-latest
+    runs-on: python-latest 
     steps:
       - name: Checkout do repositório
         uses: actions/checkout@v2
