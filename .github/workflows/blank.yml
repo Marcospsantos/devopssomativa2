@@ -42,7 +42,7 @@ jobs:
           password: ${{secrets.DOCKERHUB_PWD}}
 
         - name: Build Docker image
-          run: docker build -t eronbetine/pucpr:latest 
+          run: docker build -t santk/imagem-minha:latest 
 
               
       - name: Push da imagem para o registro
