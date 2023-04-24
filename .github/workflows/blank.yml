@@ -21,8 +21,7 @@ jobs:
           username: ${{secrets.DOCKERHUB_USER}}
           password: ${{secrets.DOCKERHUB_PWD}}
 
-      - name: Pull da imagem para o Docker Hub
-        run: docker pull imagem-minha:latest
+      
         
   test:
     needs: build
