@@ -45,8 +45,7 @@ jobs:
           password: ${{secrets.DOCKERHUB_PWD}}
           
       - name: Start do Docker Registry
-        run: docker run -d -p 5000:5000 --imagem-minha:latest meuregistro registry:2
-
+        run: docker run -d -p 5000:5000 --name meu-registro registry:2
       - name: Pull da imagem do Docker Hub
         run: docker pull imagem-minha:latest
 
