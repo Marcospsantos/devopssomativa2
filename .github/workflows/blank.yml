@@ -1,42 +1,70 @@
-name: Python app build, test, and deploy
+name: Python Flask CI/CD
 
+# Define os eventos que disparam o workflow (push, pull_request, etc)
 on:
   push:
-    branches: [ main ]
+    branches: [main]
+  pull_request:
+    branches: [main]
 
+# Define as etapas do workflow
 jobs:
+
+  # Job de Build
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-
-    - name: Set up Python 3.8
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.8
+    - name: Checkout code
+      uses: actions/checkout@v2
 
     - name: Build Docker image
       uses: docker/build-push-action@v2
       with:
         context: .
-        push: true
-        tags: yourdockerusername/python-app:latest
+        push: false # Desabilita o push para o Docker Hub
+        tags: my-image:latest
 
-    - name: Test app
-      run: |
-        pip install pytest
-        pytest tests.py
+  # Job de Testes
+  test:
+    runs-on: ubuntu-latest
 
-    - name: Deploy app
-      uses: appleboy/ssh-action@master
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Build Docker image
+      uses: docker/build-push-action@v2
       with:
-        host: yourserver.com
-        username: yourusername
-        password: ${{ secrets.PASSWORD }}
-        script: |
-          docker stop python-app || true
-          docker rm python-app || true
-          docker pull yourdockerusername/python-app:latest
-          docker run -d -p 8000:8000 --name python-app yourdockerusername/python-app:latest
+        context: .
+        push: false # Desabilita o push para o Docker Hub
+        tags: my-image:latest
 
+    - name: Run tests
+      run: |
+        docker run --rm my-image:latest python -m unittest discover tests/
+
+  # Job de Deploy
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [test]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        push: true # Habilita o push para o Docker Hub
+        tags: my-image:latest
+
+    - name: Deploy to Ngrok
+      env:
+        NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }} # Define o token de autenticação do Ngrok como uma secret
+      run: |
+        curl https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip --output ngrok.zip
+        unzip ngrok.zip
+        ./ngrok authtoken $NGROK_AUTH_TOKEN
+        ./ngrok http 5000 # Redireciona o tráfego do Ngrok para a porta 5000
