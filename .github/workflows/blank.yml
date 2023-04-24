@@ -25,15 +25,15 @@ jobs:
           username: ${{secrets.DOCKERHUB_USER}}
           password: ${{secrets.DOCKERHUB_PWD}}
           
- test-job:
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v3
-        - name: Install dependencies
-          run: pip install Flask
-        - uses: AppThreat/sast-scan-action@master
-          with:
-            type: "python"
+  test-job:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install dependencies
+        run: pip install Flask
+      - uses: AppThreat/sast-scan-action@master
+        with:
+          type: "python"
 
   deploy:
     runs-on: ubuntu-latest
@@ -45,15 +45,15 @@ jobs:
           username: ${{secrets.DOCKERHUB_USER}}
           password: ${{secrets.DOCKERHUB_PWD}}
           
-          - name: Send notification
-          if: github.event_name == 'pull_request' || github.event_name == 'push'
-          env:
-            DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-          run: |
-            curl -X POST -H 'Content-type: application/json' \
-              --data '{"content": "Uma nova imagem Docker foi publicada!"}' \
-              $DISCORD_WEBHOOK
-
+      - name: Send notification
+        if: github.event_name == 'pull_request' || github.event_name == 'push'
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+            --data '{"content": "Uma nova imagem Docker foi publicada!"}' \
+            $DISCORD_WEBHOOK
+      
       - name: Pull da imagem do registro
         run: docker pull localhost:5000/imagem-minha:latest 
 
