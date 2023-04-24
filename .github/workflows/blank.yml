@@ -37,7 +37,7 @@ jobs:
           password: ${{secrets.DOCKERHUB_PWD}}
 
       - name: Push da imagem para o registro
-        run: docker push localhost:5000/imagem-minha:latest
+        run: docker push localhost:5000/imagem-minha:latest 
 
       - name: Pull da imagem do registro
         run: docker pull localhost:5000/imagem-minha:latest 
