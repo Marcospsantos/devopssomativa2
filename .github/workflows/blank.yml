@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: python-latest
     steps:
       - name: Checkout do repositório
         uses: actions/checkout@v2
@@ -43,4 +43,4 @@ jobs:
           password: ${{secrets.DOCKERHUB_PWD}}
 
       - name: Expose Docker container
-        run: docker run -it -d -p 8081:80 imagem-nova:latest
+        run: docker run -it -d -p 5000:5000 imagem-minha:latest
