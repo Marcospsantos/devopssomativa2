@@ -58,4 +58,4 @@ jobs:
         run: docker push localhost:5000/imagem-minha:latest
 
       - name: Rodar container com a imagem
-        run: docker run -d -p 8080:8080 localhost:5000/imagem-minha:latest
+        run: docker run -d -p 8080:8080 localhost:5000/imagem-minha:latest 
