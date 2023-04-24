@@ -50,14 +50,15 @@ jobs:
       - name: Pull da imagem do Docker Hub
         run: docker pull imagem-minha:latest
 
+              
+      - name: Push da imagem para o registro
+        run: docker push localhost:5000/imagem-minha:latest
+         docker pull localhost:5000/imagem-minha:latest 
+          docker push localhost:5000/imagem-minha:latest
+          
       - name: Tag da imagem com o endereço do registro
         run: docker tag imagem-minha:latest localhost:5000/imagem-minha:latest
          docker image tag ubuntu localhost:5000/imagem-minha:latest
-         
-      - name: Push da imagem para o registro
-        run: docker push localhost:5000/imagem-minha:latest
-         docker push localhost:5000/imagem-minha:latest 
-          docker pull localhost:5000/imagem-minha:latest
 
       - name: Rodar container com a imagem
         run: docker run -d -p 8080:8080 localhost:5000/imagem-minha:latest
