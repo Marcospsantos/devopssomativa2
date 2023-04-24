@@ -20,9 +20,9 @@ jobs:
         with:
           username: ${{secrets.DOCKERHUB_USER}}
           password: ${{secrets.DOCKERHUB_PWD}}
-            docker pull ubuntu
-      - name: Pull da imagem para o Docker Hub
-        run: docker pull imagem-minha:latest
+
+      - name: Push da imagem para o Docker Hub
+        run: docker push imagem-minha:latest
         
   test:
     needs: build
@@ -44,16 +44,18 @@ jobs:
         with:
           username: ${{secrets.DOCKERHUB_USER}}
           password: ${{secrets.DOCKERHUB_PWD}}
-           docker run -d -p 5000:5000 --name meuregistro registry:2
+          
+      - name: Start do Docker Registry
+        run: docker run -d -p 5000:5000 --name meuregistro registry:2
 
       - name: Pull da imagem do Docker Hub
         run: docker pull imagem-minha:latest
-         docker run -d -p 5000:5000 --name meuregistro registry:2
 
-      - name: Login no Docker Hub
-        uses: docker/login-action@v1
-        with:
-          username: ${{secrets.DOCKERHUB_USER}}
-          password: ${{secrets.DOCKERHUB_PWD}}
+      - name: Tag da imagem com o endereço do registro
+        run: docker tag imagem-minha:latest localhost:5000/minha_imagem
+
+      - name: Push da imagem para o registro
+        run: docker push localhost:5000/minha_imagem
+
       - name: Rodar container com a imagem
-        run: docker run -d -p 5000:5000 minha_imagem
+        run: docker run -d -p 8080:8080 localhost:5000/minha_imagem
