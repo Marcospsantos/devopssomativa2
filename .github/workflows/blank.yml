@@ -23,6 +23,17 @@ jobs:
             docker pull ubuntu
       - name: Pull da imagem para o Docker Hub
         run: docker pull imagem-minha:latest
+        
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run SAST Analysis via Semgrep
+        uses: returntocorp/semgrep-action@v1
+        with:
+          username: ${{secrets.DOCKERHUB_USER}}
+          password: ${{secrets.DOCKERHUB_PWD}}
+          #config: python.lang.security.yaml
 
   deploy:
     runs-on: ubuntu-latest
