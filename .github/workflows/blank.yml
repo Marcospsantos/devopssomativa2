@@ -20,7 +20,7 @@ jobs:
         with:
           username: ${{secrets.DOCKERHUB_USER}}
           password: ${{secrets.DOCKERHUB_PWD}}
-
+            docker pull ubuntu
       - name: Pull da imagem para o Docker Hub
         run: docker pull imagem-minha:latest
 
