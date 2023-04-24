@@ -21,7 +21,6 @@ jobs:
           username: ${{secrets.DOCKERHUB_USER}}
           password: ${{secrets.DOCKERHUB_PWD}}
 
-      
         
   test:
     needs: build
@@ -35,24 +34,25 @@ jobs:
           #config: python.lang.security.yaml
 
   deploy:
-     name: Log in to Docker Hub
-     uses: docker/login-action@v1
-          with:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v1
+        with:
           username: ${{secrets.DOCKERHUB_USER}}
           password: ${{secrets.DOCKERHUB_PWD}}
 
-        - name: Build Docker image
-          run: docker build -t santk/imagem-minha:latest 
+      - name: Build Docker image
+        run: docker build -t santk/imagem-minha:latest .
 
-              
       - name: Push da imagem para o registro
-        run: docker push localhost:5000/imagem-minha:latest
-         docker pull localhost:5000/imagem-minha:latest 
+        run: |
+          docker tag imagem-minha:latest localhost:5000/imagem-minha:latest
           docker push localhost:5000/imagem-minha:latest
-          
-      - name: Tag da imagem com o endereço do registro
-        run: docker tag imagem-minha:latest localhost:5000/imagem-minha:latest
-         docker image tag ubuntu localhost:5000/imagem-minha:latest
+
+      - name: Pull da imagem do registro
+        run: docker pull localhost:5000/imagem-minha:latest 
 
       - name: Rodar container com a imagem
         run: docker run -d -p 8080:8080 localhost:5000/imagem-minha:latest
