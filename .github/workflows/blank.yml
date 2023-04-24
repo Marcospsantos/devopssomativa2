@@ -7,10 +7,13 @@ on:
 
 jobs:
   build:
-    runs-on: python:latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout do repositório
         uses: actions/checkout@v2
+
+      - name: Build da imagem Docker
+        run: docker build -t minha_imagem .
 
       - name: Login no Docker Hub
         uses: docker/login-action@v1
@@ -18,29 +21,21 @@ jobs:
           username: ${{secrets.DOCKERHUB_USER}}
           password: ${{secrets.DOCKERHUB_PWD}}
 
-  test:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Run SAST Analysis via Semgrep
-        uses: returntocorp/semgrep-action@v1
-        with:
-          username: ${{secrets.DOCKERHUB_USER}}
-          password: ${{secrets.DOCKERHUB_PWD}}
-          # config: python.lang.security.yaml
+      - name: Push da imagem para o Docker Hub
+        run: docker push minha_imagem
 
   deploy:
     runs-on: ubuntu-latest
-    needs: test
+    needs: build
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Log in to Docker Hub
+      - name: Login no Docker Hub
         uses: docker/login-action@v1
         with:
           username: ${{secrets.DOCKERHUB_USER}}
           password: ${{secrets.DOCKERHUB_PWD}}
 
-      - name: Expose Docker container
-        run: docker run -it -d -p 5000:5000/imagem-minha:latest
+      - name: Pull da imagem do Docker Hub
+        run: docker pull minha_imagem
+
+      - name: Rodar container com a imagem
+        run: docker run -d -p 5000:5000 minha_imagem
